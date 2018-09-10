@@ -1,0 +1,138 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Checkout example for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>Library creation form</h2>
+        <p class="lead">Welcome to Library adding form. Please fill the form then you can press the create button</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 order-md-1">
+            <form th:action="@{/bibliothecas}" th:method="POST" th:object="${bibliotheca}">
+                <h4 class="mb-3">Library</h4>
+                <div class="needs-validation">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label >Library Name</label>
+                            <input th:field="*{name}" type="text" class="form-control" placeholder="" value="" required>
+                            <div th:errors="*{name}" class="invalid-feedback">
+                                Valid first name is required.
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Date of Foundation</label>
+                            <input th:field="*{yearOfFoundation}" type="date" class="form-control" placeholder="" value="" required>
+                            <div th:errors="*{yearOfFoundation}" class="invalid-feedback">
+                                Valid last name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <h4 class="mb-3">Book(s)</h4>
+                    <div class="books">
+                        <div class="book" th:each="book, bookStat : *{books}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label >Book Name</label>
+                                    <input type="text" class="form-control" placeholder="" th:field="*{books[__${bookStat.index}__].name}">
+                                    <div th:errors="*{books[__${bookStat.index}__].name}" class="invalid-feedback">
+                                        Name  is required.
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label >Writer of Book</label>
+                                    <input type="text" class="form-control" placeholder="" th:field="*{books[__${bookStat.index}__].writer}">
+                                    <div th:errors="*{books[__${bookStat.index}__].writer}" class="invalid-feedback">
+                                        Writer is required.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label >Date Of Issue</label>
+                                    <input type="date" class="form-control" th:field="*{books[__${bookStat.index}__].dateOfIssue}" placeholder="">
+                                    <div class="invalid-feedback" th:errors="*{books[__${bookStat.index}__].dateOfIssue}">
+                                        Date is from future.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="row">
+                        <button class="btn btn-primary btn-lg  pull-right col-md-3" id="addBook" type="button">Add New Book Field</button>
+                    </div>
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Create Library</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2018-2019 LibraryCreation</p>
+        <ul class="list-inline">
+            <li class="list-inline-item"><a href="#">Privacy</a></li>
+            <li class="list-inline-item"><a href="#">Terms</a></li>
+            <li class="list-inline-item"><a href="#">Support</a></li>
+        </ul>
+    </footer>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script>
+    $(function () {
+       $('#addBook').click(function () {
+           bookIndex = $('.book').length;
+           $(".books").append("<hr>")
+           $(".books").append(createNewBookForm(bookIndex));
+       })
+    });
+
+    function createNewBookForm(index) {
+        let book = $("<div class='book'></div>");
+        let nameAndWriterRow = $("<div class='row'></div>");
+        let dateOfIssueRow = $("<div class='row'></div>");
+        let bookNameCol = $("<div class='col-md-6 mb-3'></div>");
+        let bookWriterCol = $("<div class='col-md-6 mb-3'></div>");
+        let bookIssueDateCol = $("<div class='col-md-3 mb-3'></div>");
+        let bookNameInput = $("<label >Book Name</label> " + "<input type='text' class='form-control' name='books[" + index + "].name'>");
+        let bookWriterInput = $("<label >Writer of Book</label> " + "<input type='text' class='form-control' placeholder='' name='books[" + index + "].writer'>");
+        let bookIssueDateInput = $("<label >Date Of Issue</label><input type='date' class='form-control' " + "name='books[" + index + "].dateOfIssue' placeholder=''>");
+        //Append process
+        //Row appends
+        book.append(nameAndWriterRow);
+        book.append(dateOfIssueRow);
+        //Col appends
+        nameAndWriterRow.append(bookNameCol);
+        nameAndWriterRow.append(bookWriterCol);
+        dateOfIssueRow.append(bookIssueDateCol);
+        //Input appends
+        bookNameCol.append(bookNameInput);
+        bookWriterCol.append(bookWriterInput);
+        bookIssueDateCol.append(bookIssueDateInput);
+        return book;
+    }
+</script>
+</body>
+</html>
